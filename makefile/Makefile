@@ -1,10 +1,10 @@
-MUDUO_DIRECTORY ?= $(HOME)/build/debug-install
+MUDUO_DIRECTORY = /home/qouan/Downloads/build/release-install
 #MUDUO_DIRECTORY ?= $(HOME)/build/install
 MUDUO_INCLUDE = $(MUDUO_DIRECTORY)/include
 MUDUO_LIBRARY = $(MUDUO_DIRECTORY)/lib
 SRC = ../src
-
-CXXFLAGS = -g -O0 -Wall -Wextra -Werror \
+#//Wall
+CXXFLAGS = -g -O0  -Wextra -Werror -std=c++11\
 	   -Wconversion -Wno-unused-parameter \
 	   -Wold-style-cast -Woverloaded-virtual \
 	   -Wpointer-arith -Wshadow -Wwrite-strings \
@@ -13,11 +13,12 @@ CXXFLAGS = -g -O0 -Wall -Wextra -Werror \
 
 LDFLAGS = -L$(MUDUO_LIBRARY) -lmuduo_net -lmuduo_base -lpthread -lrt
 
-all: echo
+all: main
 clean:
-	rm -f echo core
+	rm -f main *log
+	#rm -f  *log
 
-echo: $(SRC)/echo.cc
-	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+main: $(SRC)/main.cpp
+	g++ $(CXXFLAGS) -o $@  $^ $(LDFLAGS)
 
-.PHONY: all clean
+#.PHONY: all clean

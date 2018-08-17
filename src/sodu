@@ -1,0 +1,44 @@
+const int kCells=81;
+void onMessage(const TcpConnectionPtr&conn,Buffer*buf,Timestamp)
+{
+  LOGZ_DEBUG<<conn->name();
+  size_t len=readableBytes();
+  while(len>=kCells+2)
+  {
+    const char*crlf=buf->findCRLF();
+    if(crlf)
+    {
+      string request(buf->peek(),crlf);
+      string id;
+      buf->retrieveUntil(crlf+2);
+      string::iterator colon=find(request.begin(),request.end(),":");
+      if(colon!=request.end())
+      {
+        id.assign(request.begin(),colon);
+        request.erase(request.begin(),colon+1);
+      }
+      if(request.size()==implicir_cast<size_t>(kCells))
+      {
+        string result=solveSudoku(request);
+        if(id.empty())
+        {
+          conn->send(result+"\r\n");
+        }
+        else
+        {
+          conn->send(id+result+"\r\n");
+        }
+      }
+      else
+      {
+        conn->send("Bad Request!\r\n");
+        conn->shutdown();
+      }
+    }
+    else
+    {
+      conn->send("请求不完整");
+      break;
+    }
+  }
+}
